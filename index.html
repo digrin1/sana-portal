@@ -2,424 +2,235 @@
 
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sana a Rou — Portal Interno</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f3f4f6; }
-    input, button, select, textarea { font-family: inherit; }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f4f6;min-height:100vh}
+    .btn{cursor:pointer;border:none;font-family:inherit}
+    input,select{font-family:inherit;outline:none}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:7px 10px;font-size:11px}
   </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="text/babel">
-    const { useState } = React;
+<div id="app"></div>
+<script>
+const G="#4a6741",GD="#2d3f28",GL="#e8f0e0",AM="#d97706",RD="#dc2626",GR="#6b7280";
 
-```
-const G = "#4a6741", GD = "#2d3f28", GL = "#e8f0e0";
-const AM = "#d97706", RD = "#dc2626", GR = "#6b7280";
-
-const USERS = {
-  admin:   { nombre: "Administración", pass: "sar2026",     rol: "admin",    emoji: "👩‍💼", color: G,         acceso: ["ventas","finanzas","produccion","recetas"] },
-  sergio:  { nombre: "Sergio",         pass: "sergio2026",  rol: "director", emoji: "👔",  color: GD,        acceso: ["ventas","finanzas"] },
-  nina:    { nombre: "Nina",           pass: "nina2026",    rol: "cocina",   emoji: "👩‍🍳", color: "#7c3aed", acceso: ["produccion","recetas"] },
-  rodrigo: { nombre: "Rodrigo",        pass: "rod2026",     rol: "ventas",   emoji: "🤝",  color: AM,        acceso: ["ventas"] },
-  helen:   { nombre: "Helen",          pass: "helen2026",   rol: "fábrica",  emoji: "👷‍♀️", color: "#0891b2", acceso: ["produccion"] },
-  claudis: { nombre: "Claudis",        pass: "claudis2026", rol: "fábrica",  emoji: "👷‍♀️", color: "#0891b2", acceso: ["produccion"] },
+const USERS={
+admin:{nombre:“Administración”,pass:“sar2026”,rol:“admin”,emoji:“👩‍💼”,color:G,acceso:[“ventas”,“finanzas”,“produccion”,“recetas”]},
+sergio:{nombre:“Sergio”,pass:“sergio2026”,rol:“director”,emoji:“👔”,color:GD,acceso:[“ventas”,“finanzas”]},
+nina:{nombre:“Nina”,pass:“nina2026”,rol:“cocina”,emoji:“👩‍🍳”,color:”#7c3aed”,acceso:[“produccion”,“recetas”]},
+rodrigo:{nombre:“Rodrigo”,pass:“rod2026”,rol:“ventas”,emoji:“🤝”,color:AM,acceso:[“ventas”]},
+helen:{nombre:“Helen”,pass:“helen2026”,rol:“fábrica”,emoji:“👷”,color:”#0891b2”,acceso:[“produccion”]},
+claudis:{nombre:“Claudis”,pass:“claudis2026”,rol:“fábrica”,emoji:“👷”,color:”#0891b2”,acceso:[“produccion”]},
 };
 
-const ventasMes = [
-  { cliente: "Grupo Disco",    feb: 884, mar: 1023, abr: 570, color: G },
-  { cliente: "Tienda Inglesa", feb: 225, mar: 245,  abr: 210, color: AM },
-  { cliente: "BQB",            feb: 80,  mar: 40,   abr: 140, color: "#0891b2" },
-  { cliente: "Pedidos Ya",     feb: 100, mar: 70,   abr: 0,   color: "#7c3aed" },
-  { cliente: "Provaca",        feb: 0,   mar: 60,   abr: 10,  color: GR },
+const ventasMes=[
+{cliente:“Grupo Disco”,feb:884,mar:1023,abr:570,color:G},
+{cliente:“Tienda Inglesa”,feb:225,mar:245,abr:210,color:AM},
+{cliente:“BQB”,feb:80,mar:40,abr:140,color:”#0891b2”},
+{cliente:“Pedidos Ya”,feb:100,mar:70,abr:0,color:”#7c3aed”},
+{cliente:“Provaca”,feb:0,mar:60,abr:10,color:GR},
 ];
 
-const sabores = [
-  { s: "Choco",    feb: 408, mar: 241, color: "#3a1f10" },
-  { s: "Pistacho", feb: 429, mar: 260, color: G },
-  { s: "Avellana", feb: 365, mar: 269, color: "#6a4030" },
-  { s: "Caramelo", feb: 315, mar: 190, color: AM },
+const sabores=[
+{s:“Choco”,mar:241,feb:408,color:”#3a1f10”},
+{s:“Pistacho”,mar:260,feb:429,color:G},
+{s:“Avellana”,mar:269,feb:365,color:”#6a4030”},
+{s:“Caramelo”,mar:190,feb:315,color:AM},
 ];
 
-const gastos = [
-  { concepto: "Sueldos Nina + Rodrigo + Admin", monto: 7500, cat: "fijo" },
-  { concepto: "Helen y Claudis",                monto: 1667, cat: "fijo" },
-  { concepto: "Liz (consultora)",               monto: 1900, cat: "temporal" },
-  { concepto: "Alquiler fábrica",               monto: 1000, cat: "fijo" },
-  { concepto: "Logística",                      monto: 1000, cat: "variable" },
-  { concepto: "Servicios / extras fábrica",     monto: 500,  cat: "variable" },
+const gastos=[
+{c:“Sueldos Nina + Rodrigo + Admin”,m:7500,t:“fijo”},
+{c:“Helen y Claudis”,m:1667,t:“fijo”},
+{c:“Liz (consultora)”,m:1900,t:“temporal”},
+{c:“Alquiler fábrica”,m:1000,t:“fijo”},
+{c:“Logística”,m:1000,t:“variable”},
+{c:“Servicios fábrica”,m:500,t:“variable”},
 ];
 
-const produccionHoy = [
-  { sabor: "Chocolate Amargo 180g",    objetivo: 80, producido: 72 },
-  { sabor: "Maní y Caramelo 180g",     objetivo: 60, producido: 60 },
-  { sabor: "Limón y Pistacho 180g",    objetivo: 40, producido: 35 },
-  { sabor: "Choco con Avellanas 900g", objetivo: 20, producido: 18 },
+const prodHoy=[
+{s:“Chocolate Amargo 180g”,obj:80,prod:72},
+{s:“Maní y Caramelo 180g”,obj:60,prod:60},
+{s:“Limón y Pistacho 180g”,obj:40,prod:35},
+{s:“Avellanas 900g”,obj:20,prod:18},
 ];
 
-const recetas = [
-  {
-    nombre: "Base frutos secos estándar",
-    ingredientes: ["Almendras 200g","Castañas 150g","Maní 100g","Aceite de coco 50ml"],
-    pasos: ["Procesar frutos secos en cutter 3 min","Agregar aceite de coco","Presionar en molde","Abatir 15 min"],
-  },
-  {
-    nombre: "Relleno Chocolate Amargo",
-    ingredientes: ["Cacao puro 80g","Proteína cáñamo 60g","Eritritol 40g","Extracto vainilla 5ml"],
-    pasos: ["Mezclar secos","Incorporar líquidos","Dosificar sobre base","Abatir 20 min"],
-  },
+const novedadesInit=[
+{autor:“Helen”,texto:“Faltó eritritol para lote de caramelo”,hora:“08:42”,color:”#0891b2”},
+{autor:“Claudis”,texto:“Abatidor tarda más de lo normal”,hora:“10:15”,color:”#0891b2”},
 ];
 
-const Bar = ({ pct, color, h = 8 }) => (
-  <div style={{ background: "#e5e7eb", borderRadius: 4, height: h, overflow: "hidden" }}>
-    <div style={{ background: color, width: `${Math.min(pct,100)}%`, height: h, borderRadius: 4 }} />
-  </div>
-);
+// STATE
+let state={user:null,seccion:null,loginKey:“admin”,loginPass:””,error:””,prod:[…prodHoy.map(p=>({…p}))],novedades:[…novedadesInit],novTexto:””};
 
-const KPI = ({ label, value, sub, color = G }) => (
-  <div style={{ background: "#fff", borderRadius: 8, padding: "12px 14px", borderTop: `3px solid ${color}`, flex: 1, minWidth: 110 }}>
-    <div style={{ fontSize: 9, color: GR, textTransform: "uppercase", letterSpacing: 1, marginBottom: 3 }}>{label}</div>
-    <div style={{ fontSize: 20, fontWeight: 900, color }}>{value}</div>
-    {sub && <div style={{ fontSize: 10, color: GR, marginTop: 2 }}>{sub}</div>}
-  </div>
-);
+function setState(patch){Object.assign(state,patch);render();}
 
-function SecVentas() {
-  const totalAbr = ventasMes.reduce((s,r)=>s+r.abr,0);
-  const totalMar = ventasMes.reduce((s,r)=>s+r.mar,0);
-  return (
-    <div>
-      <div style={{ display:"flex", gap:8, marginBottom:16, flexWrap:"wrap" }}>
-        <KPI label="Unidades abril" value={totalAbr} sub="equiv. 180g" color={G} />
-        <KPI label="vs marzo" value={`${totalMar>totalAbr?"▼":"▲"} ${Math.abs(Math.round((totalAbr-totalMar)/totalMar*100))}%`} sub="tendencia" color={totalMar>totalAbr?RD:G} />
-        <KPI label="Facturación est." value={`$${(totalAbr*270/42).toFixed(0)} USD`} sub="prom. $270 UYU" color={AM} />
-      </div>
-      <div style={{ background:"#fff", borderRadius:8, overflow:"hidden", marginBottom:12 }}>
-        <div style={{ background:GD, color:"#fff", padding:"8px 12px", fontWeight:700, fontSize:12 }}>Consumo por cliente — unidades 180g</div>
-        <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11 }}>
-          <thead>
-            <tr style={{ background:"#f9fafb" }}>
-              {["Cliente","Feb","Mar","Abr","Tendencia"].map(h=>(
-                <th key={h} style={{ padding:"7px 10px", textAlign:h==="Cliente"||h==="Tendencia"?"left":"right", color:GD, fontWeight:700 }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {ventasMes.map((r,i)=>(
-              <tr key={r.cliente} style={{ background:i%2===0?"#fff":"#f9fafb" }}>
-                <td style={{ padding:"7px 10px", fontWeight:600, color:r.color }}>{r.cliente}</td>
-                <td style={{ padding:"7px 10px", textAlign:"right", color:GR }}>{r.feb||"—"}</td>
-                <td style={{ padding:"7px 10px", textAlign:"right", color:GR }}>{r.mar||"—"}</td>
-                <td style={{ padding:"7px 10px", textAlign:"right", fontWeight:700, color:r.abr===0?RD:G }}>{r.abr||"⚠️ 0"}</td>
-                <td style={{ padding:"7px 10px", width:100 }}>
-                  <Bar pct={(r.abr/Math.max(...ventasMes.map(x=>x.abr)))*100} color={r.color} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div style={{ background:"#fff", borderRadius:8, padding:14 }}>
-        <div style={{ fontWeight:700, fontSize:12, color:GD, marginBottom:10 }}>Ventas por sabor — 180g</div>
-        {sabores.map(s=>(
-          <div key={s.s} style={{ marginBottom:10 }}>
-            <div style={{ display:"flex", justifyContent:"space-between", fontSize:11, marginBottom:3 }}>
-              <span style={{ fontWeight:600, color:s.color }}>{s.s}</span>
-              <span style={{ color:GR }}>Mar: {s.mar} · Feb: {s.feb}</span>
-            </div>
-            <Bar pct={(s.mar/Math.max(...sabores.map(x=>x.mar)))*100} color={s.color} h={10} />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+// HELPERS
+function bar(pct,color,h=8){
+return `<div style="background:#e5e7eb;border-radius:4px;height:${h}px;overflow:hidden"><div style="background:${color};width:${Math.min(pct,100)}%;height:${h}px;border-radius:4px"></div></div>`;
+}
+function kpi(label,value,sub,color=G){
+return `<div style="background:#fff;border-radius:8px;padding:12px 14px;border-top:3px solid ${color};flex:1;min-width:110px"> <div style="font-size:9px;color:${GR};text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">${label}</div> <div style="font-size:20px;font-weight:900;color:${color}">${value}</div> ${sub?`<div style="font-size:10px;color:${GR};margin-top:2px">${sub}</div>`:””}
+
+  </div>`;
+}
+function header(titulo){
+  return `<div style="background:${GD};padding:12px 16px;display:flex;align-items:center;gap:12px">
+    <button class="btn" onclick="setState({seccion:null})" style="background:rgba(255,255,255,0.1);color:#fff;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600">← Volver</button>
+    <div style="font-size:14px;font-weight:900;color:#fff">${titulo}</div>
+  </div>`;
 }
 
-function SecFinanzas() {
-  const totalGastos = gastos.reduce((s,g)=>s+g.monto,0);
-  const ingresos = 4285;
-  const deficit = ingresos - totalGastos;
-  return (
-    <div>
-      <div style={{ display:"flex", gap:8, marginBottom:16, flexWrap:"wrap" }}>
-        <KPI label="Ingresos abril" value={`$${ingresos.toLocaleString()}`} sub="USD estimado" color={G} />
-        <KPI label="Gastos fijos" value={`$${totalGastos.toLocaleString()}`} sub="USD/mes" color={AM} />
-        <KPI label="Resultado" value={deficit>=0?`+$${deficit}`:`-$${Math.abs(deficit)}`} sub="neto del mes" color={deficit>=0?G:RD} />
-      </div>
-      <div style={{ background:"#fff", borderRadius:8, overflow:"hidden" }}>
-        <div style={{ background:GD, color:"#fff", padding:"8px 12px", fontWeight:700, fontSize:12 }}>Estructura de gastos mensuales</div>
-        <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11 }}>
-          <thead>
-            <tr style={{ background:"#f9fafb" }}>
-              {["Concepto","USD/mes","Tipo","%"].map(h=>(
-                <th key={h} style={{ padding:"7px 10px", textAlign:h==="Concepto"?"left":"right", color:GD, fontWeight:700 }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {gastos.map((g,i)=>(
-              <tr key={g.concepto} style={{ background:i%2===0?"#fff":"#f9fafb" }}>
-                <td style={{ padding:"7px 10px", fontWeight:600, color:GD }}>{g.concepto}</td>
-                <td style={{ padding:"7px 10px", textAlign:"right" }}>${g.monto.toLocaleString()}</td>
-                <td style={{ padding:"7px 10px", textAlign:"right" }}>
-                  <span style={{ fontSize:9, padding:"2px 7px", borderRadius:10, fontWeight:700,
-                    background:g.cat==="fijo"?"#dcfce7":g.cat==="variable"?"#fef9c3":"#ede9fe",
-                    color:g.cat==="fijo"?G:g.cat==="variable"?AM:"#7c3aed" }}>{g.cat}</span>
-                </td>
-                <td style={{ padding:"7px 10px", width:100 }}>
-                  <Bar pct={(g.monto/totalGastos)*100} color={g.cat==="fijo"?G:g.cat==="variable"?AM:"#7c3aed"} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr style={{ background:GD, color:"#fff" }}>
-              <td style={{ padding:"7px 10px", fontWeight:700 }}>TOTAL</td>
-              <td style={{ padding:"7px 10px", textAlign:"right", fontWeight:700 }}>${totalGastos.toLocaleString()}</td>
-              <td /><td />
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-    </div>
-  );
+// SECCIONES
+function renderVentas(){
+const totAbr=ventasMes.reduce((s,r)=>s+r.abr,0);
+const totMar=ventasMes.reduce((s,r)=>s+r.mar,0);
+const maxAbr=Math.max(…ventasMes.map(x=>x.abr));
+const maxMar=Math.max(…sabores.map(x=>x.mar));
+return ` <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap"> ${kpi("Unidades abril",totAbr,"equiv. 180g",G)} ${kpi("vs marzo",`${totMar>totAbr?“▼”:“▲”} ${Math.abs(Math.round((totAbr-totMar)/totMar*100))}%`,"tendencia",totMar>totAbr?RD:G)} ${kpi("Facturación est.","$"+Math.round(totAbr*270/42)+" USD","prom. $270 UYU",AM)} </div> <div style="background:#fff;border-radius:8px;overflow:hidden;margin-bottom:12px"> <div style="background:${GD};color:#fff;padding:8px 12px;font-weight:700;font-size:12px">Consumo por cliente — 180g</div> <table> <thead><tr style="background:#f9fafb"> <th style="text-align:left;color:${GD}">Cliente</th><th style="text-align:right;color:${GD}">Feb</th><th style="text-align:right;color:${GD}">Mar</th><th style="text-align:right;color:${GD}">Abr</th><th style="color:${GD}">Tend.</th> </tr></thead> <tbody> ${ventasMes.map((r,i)=>`<tr style=“background:${i%2===0?”#fff”:”#f9fafb”}”>
+<td style="font-weight:600;color:${r.color}">${r.cliente}</td>
+<td style="text-align:right;color:${GR}">${r.feb||”—”}</td>
+<td style="text-align:right;color:${GR}">${r.mar||”—”}</td>
+<td style="text-align:right;font-weight:700;color:${r.abr===0?RD:G}">${r.abr||“⚠️ 0”}</td>
+<td style="width:100px">${bar(r.abr/maxAbr*100,r.color)}</td>
+</tr>`).join("")} </tbody> </table> </div> <div style="background:#fff;border-radius:8px;padding:14px"> <div style="font-weight:700;font-size:12px;color:${GD};margin-bottom:10px">Ventas por sabor — 180g</div> ${sabores.map(s=>`
+<div style="margin-bottom:10px">
+<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+<span style="font-weight:600;color:${s.color}">${s.s}</span>
+<span style="color:${GR}">Mar: ${s.mar} · Feb: ${s.feb}</span>
+</div>
+${bar(s.mar/maxMar*100,s.color,10)}
+</div>`).join("")} </div>`;
 }
 
-function SecProduccion({ user }) {
-  const [prod, setProd] = useState(produccionHoy.map(p=>({...p})));
-  const [texto, setTexto] = useState("");
-  const [novedades, setNovedades] = useState([
-    { autor:"Helen",  texto:"Faltó eritritol para lote de caramelo", hora:"08:42", color:"#0891b2" },
-    { autor:"Claudis",texto:"Abatidor tarda más de lo normal hoy",   hora:"10:15", color:"#0891b2" },
-  ]);
-  const total = prod.reduce((s,p)=>s+p.producido,0);
-  const objetivo = prod.reduce((s,p)=>s+p.objetivo,0);
-
-  const enviar = () => {
-    if (!texto.trim()) return;
-    setNovedades(n=>[...n,{ autor:user.nombre, texto, hora:new Date().toLocaleTimeString("es-UY",{hour:"2-digit",minute:"2-digit"}), color:user.color }]);
-    setTexto("");
-  };
-
-  return (
-    <div>
-      <div style={{ display:"flex", gap:8, marginBottom:16, flexWrap:"wrap" }}>
-        <KPI label="Objetivo hoy" value={objetivo} sub="tortas equiv." color={G} />
-        <KPI label="Producido" value={total} sub="hasta ahora" color={AM} />
-        <KPI label="Avance" value={`${Math.round(total/objetivo*100)}%`} sub="del objetivo" color="#0891b2" />
-      </div>
-      <div style={{ background:"#fff", borderRadius:8, overflow:"hidden", marginBottom:12 }}>
-        <div style={{ background:GD, color:"#fff", padding:"8px 12px", fontWeight:700, fontSize:12 }}>
-          📋 Producción del día — {new Date().toLocaleDateString("es-UY")}
-        </div>
-        {prod.map((p,i)=>(
-          <div key={p.sabor} style={{ padding:"12px 14px", borderBottom:"1px solid #f3f4f6", background:i%2===0?"#fff":"#f9fafb" }}>
-            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
-              <span style={{ fontWeight:600, fontSize:12, color:GD }}>{p.sabor}</span>
-              <span style={{ fontSize:11, color:GR }}>Objetivo: {p.objetivo}</span>
-            </div>
-            <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-              <div style={{ flex:1 }}><Bar pct={(p.producido/p.objetivo)*100} color={p.producido>=p.objetivo?G:AM} h={12} /></div>
-              <button onClick={()=>setProd(pr=>pr.map((x,j)=>j===i?{...x,producido:Math.max(0,x.producido-1)}:x))}
-                style={{ width:28,height:28,borderRadius:4,border:"1px solid #e5e7eb",background:"#fff",cursor:"pointer",fontWeight:700,fontSize:16 }}>-</button>
-              <span style={{ fontWeight:900,fontSize:14,color:p.producido>=p.objetivo?G:AM,minWidth:32,textAlign:"center" }}>{p.producido}</span>
-              <button onClick={()=>setProd(pr=>pr.map((x,j)=>j===i?{...x,producido:x.producido+1}:x))}
-                style={{ width:28,height:28,borderRadius:4,border:`1px solid ${G}`,background:GL,cursor:"pointer",fontWeight:700,color:G,fontSize:16 }}>+</button>
-            </div>
-          </div>
-        ))}
-        <div style={{ padding:"10px 14px",background:GD,display:"flex",justifyContent:"space-between" }}>
-          <span style={{ color:"#fff",fontWeight:700,fontSize:12 }}>Total producido</span>
-          <span style={{ color:"#fff",fontWeight:900,fontSize:14 }}>{total} uds</span>
-        </div>
-      </div>
-      <div style={{ background:"#fff", borderRadius:8, overflow:"hidden" }}>
-        <div style={{ background:GD,color:"#fff",padding:"8px 12px",fontWeight:700,fontSize:12 }}>💬 Novedades del día</div>
-        <div style={{ padding:12,maxHeight:180,overflowY:"auto" }}>
-          {novedades.map((n,i)=>(
-            <div key={i} style={{ marginBottom:8,padding:"8px 10px",background:"#f9fafb",borderRadius:6,borderLeft:`3px solid ${n.color}` }}>
-              <div style={{ display:"flex",justifyContent:"space-between",marginBottom:2 }}>
-                <span style={{ fontWeight:700,fontSize:11,color:n.color }}>{n.autor}</span>
-                <span style={{ fontSize:10,color:GR }}>{n.hora}</span>
-              </div>
-              <div style={{ fontSize:11,color:"#374151" }}>{n.texto}</div>
-            </div>
-          ))}
-        </div>
-        <div style={{ padding:10,borderTop:"1px solid #e5e7eb",display:"flex",gap:8 }}>
-          <input value={texto} onChange={e=>setTexto(e.target.value)} onKeyDown={e=>e.key==="Enter"&&enviar()}
-            placeholder="Reportar novedad o incidencia..."
-            style={{ flex:1,padding:"8px 10px",border:"1px solid #e5e7eb",borderRadius:6,fontSize:11,outline:"none" }} />
-          <button onClick={enviar}
-            style={{ background:G,color:"#fff",border:"none",borderRadius:6,padding:"8px 14px",fontWeight:700,cursor:"pointer",fontSize:11 }}>Enviar</button>
-        </div>
-      </div>
-    </div>
-  );
+function renderFinanzas(){
+const tot=gastos.reduce((s,g)=>s+g.m,0);
+const ing=4285, def=ing-tot;
+const catColor=t=>t===“fijo”?G:t===“variable”?AM:”#7c3aed”;
+const catBg=t=>t===“fijo”?”#dcfce7”:t===“variable”?”#fef9c3”:”#ede9fe”;
+return ` <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap"> ${kpi("Ingresos abril","$"+ing.toLocaleString(),"USD estimado",G)} ${kpi("Gastos fijos","$"+tot.toLocaleString(),"USD/mes",AM)} ${kpi("Resultado",(def>=0?"+":"-")+"$"+Math.abs(def),"neto del mes",def>=0?G:RD)} </div> <div style="background:#fff;border-radius:8px;overflow:hidden"> <div style="background:${GD};color:#fff;padding:8px 12px;font-weight:700;font-size:12px">Estructura de gastos</div> <table> <thead><tr style="background:#f9fafb"> <th style="text-align:left;color:${GD}">Concepto</th><th style="text-align:right;color:${GD}">USD</th><th style="text-align:right;color:${GD}">Tipo</th><th style="color:${GD}">%</th> </tr></thead> <tbody> ${gastos.map((g,i)=>`<tr style=“background:${i%2===0?”#fff”:”#f9fafb”}”>
+<td style="font-weight:600;color:${GD}">${g.c}</td>
+<td style="text-align:right">$${g.m.toLocaleString()}</td>
+<td style="text-align:right"><span style="font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;background:${catBg(g.t)};color:${catColor(g.t)}">${g.t}</span></td>
+<td style="width:100px">${bar(g.m/tot*100,catColor(g.t))}</td>
+</tr>`).join("")} </tbody> <tfoot><tr style="background:${GD};color:#fff"> <td style="font-weight:700">TOTAL</td><td style="text-align:right;font-weight:700">$${tot.toLocaleString()}</td><td></td><td></td> </tr></tfoot> </table> </div>`;
 }
 
-function SecRecetas() {
-  const [abierta, setAbierta] = useState(null);
-  return (
-    <div style={{ background:"#fff",borderRadius:8,padding:14 }}>
-      <div style={{ fontWeight:700,fontSize:12,color:GD,marginBottom:10 }}>📖 Manual de recetas — Confidencial</div>
-      {recetas.map((r,i)=>(
-        <div key={r.nombre}>
-          <div onClick={()=>setAbierta(abierta===i?null:i)}
-            style={{ display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 12px",
-              background:abierta===i?GL:"#f9fafb",borderRadius:6,cursor:"pointer",marginBottom:4,
-              border:`1px solid ${abierta===i?G:"#e5e7eb"}` }}>
-            <span style={{ fontWeight:600,fontSize:12,color:abierta===i?G:GD }}>{r.nombre}</span>
-            <span style={{ color:G }}>{abierta===i?"▲":"▼"}</span>
-          </div>
-          {abierta===i && (
-            <div style={{ padding:"12px 14px",background:"#fff",border:"1px solid #e5e7eb",borderRadius:"0 0 6px 6px",marginBottom:8 }}>
-              <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:14 }}>
-                <div>
-                  <div style={{ fontSize:10,fontWeight:700,color:G,textTransform:"uppercase",letterSpacing:1,marginBottom:8 }}>Ingredientes</div>
-                  {r.ingredientes.map(ing=><div key={ing} style={{ fontSize:11,color:"#374151",padding:"3px 0",borderBottom:"1px solid #f3f4f6" }}>→ {ing}</div>)}
-                </div>
-                <div>
-                  <div style={{ fontSize:10,fontWeight:700,color:AM,textTransform:"uppercase",letterSpacing:1,marginBottom:8 }}>Proceso</div>
-                  {r.pasos.map((p,j)=><div key={p} style={{ fontSize:11,color:"#374151",padding:"3px 0",borderBottom:"1px solid #f3f4f6" }}>{j+1}. {p}</div>)}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
+function renderProduccion(){
+const {prod,novedades,novTexto}=state;
+const total=prod.reduce((s,p)=>s+p.prod,0);
+const obj=prod.reduce((s,p)=>s+p.obj,0);
+return ` <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap"> ${kpi("Objetivo hoy",obj,"tortas equiv.",G)} ${kpi("Producido",total,"hasta ahora",AM)} ${kpi("Avance",Math.round(total/obj*100)+"%","del objetivo","#0891b2")} </div> <div style="background:#fff;border-radius:8px;overflow:hidden;margin-bottom:12px"> <div style="background:${GD};color:#fff;padding:8px 12px;font-weight:700;font-size:12px">📋 Producción del día — ${new Date().toLocaleDateString("es-UY")}</div> ${prod.map((p,i)=>`
+<div style=“padding:12px 14px;border-bottom:1px solid #f3f4f6;background:${i%2===0?”#fff”:”#f9fafb”}”>
+<div style="display:flex;justify-content:space-between;margin-bottom:6px">
+<span style="font-weight:600;font-size:12px;color:${GD}">${p.s}</span>
+<span style="font-size:11px;color:${GR}">Obj: ${p.obj}</span>
+</div>
+<div style="display:flex;align-items:center;gap:10px">
+<div style="flex:1">${bar(p.prod/p.obj*100,p.prod>=p.obj?G:AM,12)}</div>
+<button class="btn" onclick="cambiarProd(${i},-1)" style="width:28px;height:28px;border-radius:4px;border:1px solid #e5e7eb;background:#fff;font-weight:700;font-size:16px">-</button>
+<span style="font-weight:900;font-size:14px;color:${p.prod>=p.obj?G:AM};min-width:32px;text-align:center">${p.prod}</span>
+<button class="btn" onclick="cambiarProd(${i},1)" style="width:28px;height:28px;border-radius:4px;border:1px solid ${G};background:${GL};font-weight:700;color:${G};font-size:16px">+</button>
+</div>
+</div>`).join("")} <div style="padding:10px 14px;background:${GD};display:flex;justify-content:space-between"> <span style="color:#fff;font-weight:700;font-size:12px">Total producido</span> <span style="color:#fff;font-weight:900;font-size:14px">${total} uds</span> </div> </div> <div style="background:#fff;border-radius:8px;overflow:hidden"> <div style="background:${GD};color:#fff;padding:8px 12px;font-weight:700;font-size:12px">💬 Novedades del día</div> <div style="padding:12px;max-height:180px;overflow-y:auto"> ${novedades.map(n=>`
+<div style="margin-bottom:8px;padding:8px 10px;background:#f9fafb;border-radius:6px;border-left:3px solid ${n.color}">
+<div style="display:flex;justify-content:space-between;margin-bottom:2px">
+<span style="font-weight:700;font-size:11px;color:${n.color}">${n.autor}</span>
+<span style="font-size:10px;color:${GR}">${n.hora}</span>
+</div>
+<div style="font-size:11px;color:#374151">${n.texto}</div>
+</div>`).join("")} </div> <div style="padding:10px;border-top:1px solid #e5e7eb;display:flex;gap:8px"> <input id="novInput" value="${novTexto}" oninput="setState({novTexto:this.value})" onkeydown="if(event.key==='Enter')enviarNov()" placeholder="Reportar novedad..." style="flex:1;padding:8px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:11px"/> <button class="btn" onclick="enviarNov()" style="background:${G};color:#fff;border-radius:6px;padding:8px 14px;font-weight:700;font-size:11px">Enviar</button> </div> </div>`;
 }
 
-const secciones = [
-  { id:"ventas",    label:"📊 Ventas",     desc:"Tablero comercial",  color:G },
-  { id:"finanzas",  label:"💰 Finanzas",   desc:"Solo directivos",    color:AM },
-  { id:"produccion",label:"🏭 Producción", desc:"Producción del día", color:"#0891b2" },
-  { id:"recetas",   label:"📖 Recetas",    desc:"Manual interno",     color:"#7c3aed" },
+let recAbierta=null;
+function renderRecetas(){
+const recetas=[
+{nombre:“Base frutos secos”,ing:[“Almendras 200g”,“Castañas 150g”,“Maní 100g”,“Aceite coco 50ml”],pasos:[“Procesar en cutter 3 min”,“Agregar aceite de coco”,“Presionar en molde”,“Abatir 15 min”]},
+{nombre:“Relleno Chocolate Amargo”,ing:[“Cacao puro 80g”,“Proteína cáñamo 60g”,“Eritritol 40g”,“Vainilla 5ml”],pasos:[“Mezclar secos”,“Incorporar líquidos”,“Dosificar sobre base”,“Abatir 20 min”]},
 ];
+return `<div style="background:#fff;border-radius:8px;padding:14px"> <div style="font-weight:700;font-size:12px;color:${GD};margin-bottom:10px">📖 Manual de recetas — Confidencial</div> ${recetas.map((r,i)=>`
+<div onclick=“toggleRec(${i})” style=“display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:${recAbierta===i?GL:”#f9fafb”};border-radius:6px;cursor:pointer;margin-bottom:4px;border:1px solid ${recAbierta===i?G:”#e5e7eb”}”>
+<span style="font-weight:600;font-size:12px;color:${recAbierta===i?G:GD}">${r.nombre}</span>
+<span style="color:${G}">${recAbierta===i?“▲”:“▼”}</span>
+</div>
+${recAbierta===i?`<div style="padding:12px 14px;background:#fff;border:1px solid #e5e7eb;border-radius:0 0 6px 6px;margin-bottom:8px;display:grid;grid-template-columns:1fr 1fr;gap:14px"> <div> <div style="font-size:10px;font-weight:700;color:${G};text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Ingredientes</div> ${r.ing.map(x=>`<div style="font-size:11px;color:#374151;padding:3px 0;border-bottom:1px solid #f3f4f6">→ ${x}</div>`).join("")} </div> <div> <div style="font-size:10px;font-weight:700;color:${AM};text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Proceso</div> ${r.pasos.map((p,j)=>`<div style="font-size:11px;color:#374151;padding:3px 0;border-bottom:1px solid #f3f4f6">${j+1}. ${p}</div>`).join("")} </div> </div>`:””}
+`).join(””)}
 
-function App() {
-  const [user, setUser] = useState(null);
-  const [seccion, setSeccion] = useState(null);
-  const [loginKey, setLoginKey] = useState("admin");
-  const [loginPass, setLoginPass] = useState("");
-  const [error, setError] = useState("");
-
-  const login = () => {
-    const u = USERS[loginKey];
-    if (u && loginPass === u.pass) { setUser({...u,key:loginKey}); setError(""); setLoginPass(""); }
-    else setError("Contraseña incorrecta");
-  };
-
-  if (!user) return (
-    <div style={{ minHeight:"100vh",background:GD,display:"flex",alignItems:"center",justifyContent:"center",padding:20 }}>
-      <div style={{ background:"#fff",borderRadius:12,padding:32,maxWidth:360,width:"100%",boxShadow:"0 8px 32px rgba(0,0,0,0.3)" }}>
-        <div style={{ textAlign:"center",marginBottom:24 }}>
-          <div style={{ fontSize:36,marginBottom:8 }}>🌿</div>
-          <div style={{ fontSize:22,fontWeight:900,color:GD }}>Sana a Rou</div>
-          <div style={{ fontSize:11,color:GR,marginTop:4,letterSpacing:1 }}>PORTAL INTERNO</div>
-        </div>
-        <div style={{ marginBottom:12 }}>
-          <label style={{ fontSize:11,color:GR,fontWeight:600,display:"block",marginBottom:4 }}>Usuario</label>
-          <select value={loginKey} onChange={e=>setLoginKey(e.target.value)}
-            style={{ width:"100%",padding:"10px 12px",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,outline:"none" }}>
-            {Object.entries(USERS).map(([k,u])=>(
-              <option key={k} value={k}>{u.emoji} {u.nombre}</option>
-            ))}
-          </select>
-        </div>
-        <div style={{ marginBottom:16 }}>
-          <label style={{ fontSize:11,color:GR,fontWeight:600,display:"block",marginBottom:4 }}>Contraseña</label>
-          <input type="password" value={loginPass} onChange={e=>setLoginPass(e.target.value)}
-            onKeyDown={e=>e.key==="Enter"&&login()} placeholder="••••••••"
-            style={{ width:"100%",padding:"10px 12px",border:`1px solid ${error?"#fca5a5":"#e5e7eb"}`,borderRadius:8,fontSize:13,outline:"none" }} />
-        </div>
-        {error && <div style={{ color:RD,fontSize:11,marginBottom:12,fontWeight:600 }}>⚠️ {error}</div>}
-        <button onClick={login}
-          style={{ width:"100%",background:G,color:"#fff",border:"none",borderRadius:8,padding:"12px",fontWeight:700,cursor:"pointer",fontSize:14 }}>
-          Entrar
-        </button>
-        <div style={{ fontSize:10,color:GR,marginTop:14,textAlign:"center" }}>
-          Contactá a administración si no recordás tu contraseña.
-        </div>
-      </div>
-    </div>
-  );
-
-  const seccionesVisibles = secciones.filter(s=>user.acceso.includes(s.id));
-
-  if (!seccion) return (
-    <div style={{ minHeight:"100vh",background:"#f3f4f6" }}>
-      <div style={{ background:GD,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center" }}>
-        <div>
-          <div style={{ fontSize:16,fontWeight:900,color:"#fff" }}>🌿 Sana a Rou</div>
-          <div style={{ fontSize:10,color:"#a5b4a0",letterSpacing:1 }}>PORTAL INTERNO</div>
-        </div>
-        <div style={{ display:"flex",alignItems:"center",gap:10 }}>
-          <span style={{ fontSize:18 }}>{user.emoji}</span>
-          <div>
-            <div style={{ fontWeight:700,fontSize:12,color:"#fff" }}>{user.nombre}</div>
-            <div style={{ fontSize:10,color:"#a5b4a0" }}>{user.rol}</div>
-          </div>
-          <button onClick={()=>{setUser(null);setSeccion(null);}}
-            style={{ background:"rgba(255,255,255,0.1)",border:"none",color:"#fff",borderRadius:6,padding:"5px 12px",cursor:"pointer",fontSize:11,marginLeft:8 }}>
-            Salir
-          </button>
-        </div>
-      </div>
-      <div style={{ padding:20 }}>
-        <div style={{ fontSize:14,color:GD,fontWeight:700,marginBottom:16 }}>Bienvenida/o, {user.nombre} 👋</div>
-        <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:12 }}>
-          {seccionesVisibles.map(s=>(
-            <button key={s.id} onClick={()=>setSeccion(s.id)}
-              style={{ background:"#fff",borderRadius:10,padding:"20px 16px",border:`2px solid ${s.color}22`,
-                borderTop:`4px solid ${s.color}`,cursor:"pointer",textAlign:"left",boxShadow:"0 2px 8px rgba(0,0,0,0.06)" }}>
-              <div style={{ fontSize:22,marginBottom:6 }}>{s.label.split(" ")[0]}</div>
-              <div style={{ fontWeight:700,fontSize:13,color:s.color }}>{s.label.slice(3)}</div>
-              <div style={{ fontSize:11,color:GR,marginTop:3 }}>{s.desc}</div>
-            </button>
-          ))}
-        </div>
-        {user.acceso.length < 4 && (
-          <div style={{ marginTop:14,padding:"10px 14px",background:"#fef9c3",borderRadius:8,fontSize:11,color:AM,fontWeight:600 }}>
-            🔒 Tenés acceso a {user.acceso.length} de {secciones.length} secciones
-          </div>
-        )}
-      </div>
-    </div>
-  );
-
-  return (
-    <div style={{ minHeight:"100vh",background:"#f3f4f6" }}>
-      <div style={{ background:GD,padding:"12px 16px",display:"flex",alignItems:"center",gap:12 }}>
-        <button onClick={()=>setSeccion(null)}
-          style={{ background:"rgba(255,255,255,0.1)",border:"none",color:"#fff",borderRadius:6,padding:"6px 12px",cursor:"pointer",fontSize:12,fontWeight:600 }}>
-          ← Volver
-        </button>
-        <div style={{ fontSize:14,fontWeight:900,color:"#fff" }}>
-          {secciones.find(s=>s.id===seccion)?.label}
-        </div>
-      </div>
-      <div style={{ padding:16 }}>
-        {seccion==="ventas"      && <SecVentas />}
-        {seccion==="finanzas"    && <SecFinanzas />}
-        {seccion==="produccion"  && <SecProduccion user={user} />}
-        {seccion==="recetas"     && <SecRecetas />}
-      </div>
-    </div>
-  );
+  </div>`;
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-```
+// ACCIONES
+window.cambiarProd=(i,delta)=>{
+const p=[…state.prod];
+p[i]={…p[i],prod:Math.max(0,p[i].prod+delta)};
+setState({prod:p});
+};
+window.enviarNov=()=>{
+if(!state.novTexto.trim())return;
+const hora=new Date().toLocaleTimeString(“es-UY”,{hour:“2-digit”,minute:“2-digit”});
+setState({novedades:[…state.novedades,{autor:state.user.nombre,texto:state.novTexto,hora,color:state.user.color}],novTexto:””});
+};
+window.toggleRec=(i)=>{recAbierta=recAbierta===i?null:i;render();};
+window.setState=setState;
 
-  </script>
+// LOGIN
+function renderLogin(){
+return `<div style="min-height:100vh;background:${GD};display:flex;align-items:center;justify-content:center;padding:20px"> <div style="background:#fff;border-radius:12px;padding:32px;max-width:360px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.3)"> <div style="text-align:center;margin-bottom:24px"> <div style="font-size:36px;margin-bottom:8px">🌿</div> <div style="font-size:22px;font-weight:900;color:${GD}">Sana a Rou</div> <div style="font-size:11px;color:${GR};margin-top:4px;letter-spacing:1px">PORTAL INTERNO</div> </div> <label style="font-size:11px;color:${GR};font-weight:600;display:block;margin-bottom:4px">Usuario</label> <select id="loginKey" style="width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;margin-bottom:12px"> ${Object.entries(USERS).map(([k,u])=>`<option value="${k}">${u.emoji} ${u.nombre}</option>`).join("")} </select> <label style="font-size:11px;color:${GR};font-weight:600;display:block;margin-bottom:4px">Contraseña</label> <input id="loginPass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" style="width:100%;padding:10px 12px;border:1px solid ${state.error?"#fca5a5":"#e5e7eb"};border-radius:8px;font-size:13px;margin-bottom:${state.error?8:16}px"/> ${state.error?`<div style="color:${RD};font-size:11px;font-weight:600;margin-bottom:12px">⚠️ ${state.error}</div>`:””}
+<button class="btn" onclick="doLogin()" style="width:100%;background:${G};color:#fff;border-radius:8px;padding:12px;font-weight:700;font-size:14px">Entrar</button>
+</div>
+
+  </div>`;
+}
+window.doLogin=()=>{
+  const k=document.getElementById("loginKey").value;
+  const p=document.getElementById("loginPass").value;
+  const u=USERS[k];
+  if(u&&p===u.pass){setState({user:{...u,key:k},error:"",loginPass:""});}
+  else setState({error:"Contraseña incorrecta"});
+};
+
+// MENU
+const SECS=[
+{id:“ventas”,label:“📊 Ventas”,desc:“Tablero comercial”,color:G},
+{id:“finanzas”,label:“💰 Finanzas”,desc:“Solo directivos”,color:AM},
+{id:“produccion”,label:“🏭 Producción”,desc:“Producción del día”,color:”#0891b2”},
+{id:“recetas”,label:“📖 Recetas”,desc:“Manual interno”,color:”#7c3aed”},
+];
+function renderMenu(){
+const {user}=state;
+const visibles=SECS.filter(s=>user.acceso.includes(s.id));
+return `<div style="min-height:100vh;background:#f3f4f6"> <div style="background:${GD};padding:14px 20px;display:flex;justify-content:space-between;align-items:center"> <div> <div style="font-size:16px;font-weight:900;color:#fff">🌿 Sana a Rou</div> <div style="font-size:10px;color:#a5b4a0;letter-spacing:1px">PORTAL INTERNO</div> </div> <div style="display:flex;align-items:center;gap:10px"> <span style="font-size:18px">${user.emoji}</span> <div> <div style="font-weight:700;font-size:12px;color:#fff">${user.nombre}</div> <div style="font-size:10px;color:#a5b4a0">${user.rol}</div> </div> <button class="btn" onclick="setState({user:null,seccion:null})" style="background:rgba(255,255,255,0.1);color:#fff;border-radius:6px;padding:5px 12px;font-size:11px;margin-left:8px">Salir</button> </div> </div> <div style="padding:20px"> <div style="font-size:14px;color:${GD};font-weight:700;margin-bottom:16px">Bienvenida/o, ${user.nombre} 👋</div> <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"> ${visibles.map(s=>`
+<button class="btn" onclick="setState({seccion:'${s.id}'})" style="background:#fff;border-radius:10px;padding:20px 16px;border:2px solid ${s.color}22;border-top:4px solid ${s.color};text-align:left;box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+<div style="font-size:22px;margin-bottom:6px">${s.label.split(” “)[0]}</div>
+<div style="font-weight:700;font-size:13px;color:${s.color}">${s.label.slice(3)}</div>
+<div style="font-size:11px;color:${GR};margin-top:3px">${s.desc}</div>
+</button>`).join(””)}
+</div>
+</div>
+
+  </div>`;
+}
+
+// RENDER
+function render(){
+const {user,seccion}=state;
+if(!user){document.getElementById(“app”).innerHTML=renderLogin();return;}
+if(!seccion){document.getElementById(“app”).innerHTML=renderMenu();return;}
+const sec=SECS.find(s=>s.id===seccion);
+let content=””;
+if(seccion===“ventas”)content=renderVentas();
+else if(seccion===“finanzas”)content=renderFinanzas();
+else if(seccion===“produccion”)content=renderProduccion();
+else if(seccion===“recetas”)content=renderRecetas();
+document.getElementById(“app”).innerHTML=` <div style="min-height:100vh;background:#f3f4f6"> ${header(sec.label)} <div style="padding:16px">${content}</div> </div>`;
+}
+
+render();
+</script>
+
 </body>
 </html>
